@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Posts - Moyo Attacker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">MOYO<span>_</span>ATTACKER</div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="blog.html">All Posts</a>
+            <a href="index.html#contact">Contact</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="blog-header">
+            <h1>📚 All Blog Posts</h1>
+            <p style="margin-top: 15px;">Total: <span id="post-count">0</span> artikel</p>
+        </div>
+
+        <div id="all-posts"></div>
+
+        <a href="index.html" class="back-button">← Back to Home</a>
+
+        <footer>
+            <p>&copy; 2025 Moyo Attacker</p>
+        </footer>
+    </div>
+
+    <script>
+        const posts = [
+            { title: "Cara Memulai Ethical Hacking", date: "25 Mei 2026", url: "posting/ethical-hacking-pemula.html" },
+            { title: "Setup Kali Linux untuk Security Testing", date: "20 Mei 2026", url: "posting/setup-kali-linux.html" },
+            { title: "Pentingnya Cyber Security di Era Digital", date: "15 Mei 2026", url: "posting/cyber-security-era-digital.html" }
+        ];
+
+        document.getElementById('post-count').innerText = posts.length;
+        
+        const container = document.getElementById('all-posts');
+        let html = '';
+        posts.forEach(post => {
+            html += `
+                <div class="post-card">
+                    <div class="post-title">${post.title}</div>
+                    <div class="post-meta">📅 ${post.date}</div>
+                    <a href="${post.url}" class="read-more">Baca →</a>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    </script>
+</body>
+</html>
