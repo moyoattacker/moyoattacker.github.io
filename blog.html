@@ -2,13 +2,203 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Posts - Moyo Attacker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>All Posts - Moyo Tamvan</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Tambahan CSS khusus untuk responsive blog.html */
+        
+        /* Container lebih fleksibel */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        /* Header blog */
+        .blog-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .blog-header h1 {
+            font-size: clamp(28px, 5vw, 48px);
+            word-break: break-word;
+        }
+        
+        /* Grid untuk post cards */
+        #all-posts {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        /* Post card styling */
+        .post-card {
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #00ff9d;
+            transition: transform 0.3s;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .post-card:hover {
+            transform: translateX(5px);
+        }
+        
+        .post-title {
+            font-size: clamp(18px, 4vw, 24px);
+            color: #ff3366;
+            margin-bottom: 10px;
+            word-break: break-word;
+        }
+        
+        .post-meta {
+            font-size: 12px;
+            color: #88ffcc;
+            margin-bottom: 12px;
+        }
+        
+        .post-excerpt {
+            color: #bbffdd;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            font-size: 14px;
+            word-break: break-word;
+        }
+        
+        .read-more {
+            color: #00ff9d;
+            text-decoration: none;
+            border: 1px solid #00ff9d;
+            padding: 8px 20px;
+            border-radius: 5px;
+            transition: 0.3s;
+            display: inline-block;
+            font-size: 14px;
+        }
+        
+        .back-button {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 25px;
+            background: transparent;
+            border: 1px solid #00ff9d;
+            color: #00ff9d;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: 0.3s;
+            font-size: 14px;
+        }
+        
+        /* Tombol group */
+        .button-group {
+            text-align: center;
+            margin-top: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        /* Navbar responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                padding: 15px 20px;
+                gap: 12px;
+            }
+            
+            .nav-links {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
+            
+            .nav-links a {
+                margin: 0;
+                font-size: 14px;
+            }
+            
+            .logo {
+                font-size: 22px;
+            }
+            
+            /* Container padding lebih kecil */
+            .container {
+                padding: 15px;
+            }
+            
+            /* Post card padding lebih kecil */
+            .post-card {
+                padding: 15px;
+            }
+            
+            /* Tombol full width di mobile */
+            .back-button, .read-more {
+                width: 100%;
+                text-align: center;
+                margin: 5px 0;
+            }
+            
+            .button-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+        
+        /* Untuk layar sangat kecil (HP lama) */
+        @media (max-width: 480px) {
+            .post-title {
+                font-size: 16px;
+            }
+            
+            .post-excerpt {
+                font-size: 12px;
+            }
+            
+            .read-more, .back-button {
+                font-size: 12px;
+                padding: 8px 16px;
+            }
+        }
+        
+        /* Untuk tablet */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .container {
+                padding: 30px;
+            }
+            
+            .post-card {
+                padding: 25px;
+            }
+        }
+        
+        /* Loading dan error styling */
+        .loading, .error-msg {
+            text-align: center;
+            padding: 50px;
+            font-size: clamp(14px, 4vw, 16px);
+        }
+        
+        code {
+            background: #000;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            word-break: break-all;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar">
-        <div class="logo">MOYO<span>_</span>ATTACKER</div>
+        <div class="logo">MOYO<span>_</span>TAMVAN</div>
         <div class="nav-links">
             <a href="index.html">Home</a>
             <a href="blog.html">All Posts</a>
@@ -20,20 +210,20 @@
     <div class="container">
         <div class="blog-header">
             <h1>📚 All Blog Posts</h1>
-            <p style="margin-top: 15px;">Total: <span id="post-count">0</span> artikel</p>
+            <p style="margin-top: 15px; font-size: clamp(14px, 4vw, 16px);">Total: <span id="post-count">0</span> artikel</p>
         </div>
 
         <div id="all-posts">
-            <div style="text-align: center; padding: 50px;">🔄 Loading posts...</div>
+            <div class="loading">🔄 Loading posts...</div>
         </div>
 
-        <div style="text-align: center; margin-top: 30px;">
-            <a href="index.html" class="back-button" style="margin-right: 15px;">← Back to Home</a>
+        <div class="button-group">
+            <a href="index.html" class="back-button">← Back to Home</a>
             <a href="documentation/bounty/" class="read-more" style="background:#ff3366; border-color:#ff3366;">🔬 View Security Research (31 Reports)</a>
         </div>
 
         <footer>
-            <p>&copy; 2026 Moyo Attacker - Find The Bug, Own The Shell</p>
+            <p style="font-size: clamp(11px, 3vw, 14px);">&copy; 2026 Moyo TAMVAN - Find The Bug, Own The Shell</p>
         </footer>
     </div>
 
@@ -60,14 +250,28 @@
                 let html = '';
                 
                 if (posts.length === 0) {
-                    html = '<div style="text-align:center;padding:50px;">📭 Belum ada postingan blog. Buat postingan pertama di folder <code style="background:#000;padding:2px 8px;border-radius:4px;">posting/</code>!</div>';
+                    html = '<div class="error-msg">📭 Belum ada postingan blog. Buat postingan pertama di folder <code>posting/</code>!</div>';
                 } else {
                     posts.forEach(post => {
+                        // Escape HTML untuk keamanan
+                        const safeTitle = post.title.replace(/[&<>]/g, function(m) {
+                            if (m === '&') return '&amp;';
+                            if (m === '<') return '&lt;';
+                            if (m === '>') return '&gt;';
+                            return m;
+                        });
+                        const safeExcerpt = post.excerpt.replace(/[&<>]/g, function(m) {
+                            if (m === '&') return '&amp;';
+                            if (m === '<') return '&lt;';
+                            if (m === '>') return '&gt;';
+                            return m;
+                        });
+                        
                         html += `
                             <div class="post-card">
-                                <div class="post-title">${post.title}</div>
+                                <div class="post-title">${safeTitle}</div>
                                 <div class="post-meta">📅 ${formatDate(post.date)}</div>
-                                <div class="post-excerpt">${post.excerpt}</div>
+                                <div class="post-excerpt">${safeExcerpt}</div>
                                 <a href="post.html?post=posting/${post.file}" class="read-more">Baca →</a>
                             </div>
                         `;
@@ -78,7 +282,7 @@
                 
             } catch (error) {
                 document.getElementById('all-posts').innerHTML = `
-                    <div style="text-align:center;padding:50px;color:#ff3366;">
+                    <div class="error-msg">
                         ❌ Error: ${error.message}<br>
                         <small>Pastikan file <strong>posts.json</strong> ada di root folder.</small>
                     </div>
