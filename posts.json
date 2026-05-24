@@ -1,10 +1,10 @@
 {
   "posts": [
     {
-      "title": "Vulnerability Ranking -- iCloud Activation Lock Research",
+      "title": "Vulnerability Ranking iCloud Activation Lock Research",
       "date": "2026-05-24",
       "file": "ranking_vulnb.md",
-      "excerpt": "All 31 findings ranked from most critical to least critical. Per-finding details: [`documentation/bounty/NN-*.md`](documentation/bounty/)."
+      "excerpt": "All 31 findings ranked from most critical to least critical. Per-finding details: documentation/bounty/NN-*.md"
     }
   ]
 }
