@@ -52,13 +52,11 @@
         <h2 class="section-title">📝 Latest Posts</h2>
         
         <div id="post-list">
-            <!-- Posts akan muncul di sini via JavaScript -->
-            <div style="text-align: center; padding: 50px;">Loading posts...</div>
+            <div style="text-align: center; padding: 50px;">🔄 Loading posts...</div>
         </div>
 
         <div style="text-align: center; margin-top: 30px;">
             <a href="blog.html" class="read-more" style="margin: 0 10px;">📚 View All Posts</a>
-            <a href="https://github.com/moyoattacker/moyoattacker.github.io/new/main/posting" class="read-more" style="background:#ff3366; border-color:#ff3366;">✏️ Buat Posting Baru</a>
         </div>
 
         <section id="contact">
@@ -76,40 +74,37 @@
     </div>
 
     <script>
-        // Daftar postingan (update manual setiap bikin posting baru)
+        // Daftar postingan (otomatis dari folder, tapi harus manual daftarin dulu)
+        // Biar otomatis, kita pakai sistem index.json nanti
+        
         const posts = [
-            {
-                title: "Cara Memulai Ethical Hacking",
-                date: "25 Mei 2026",
-                excerpt: "Panduan lengkap untuk pemula yang ingin belajar ethical hacking dari nol...",
-                url: "posting/ethical-hacking-pemula.html"
-            },
-            {
-                title: "Setup Kali Linux untuk Security Testing",
-                date: "20 Mei 2026",
-                excerpt: "Langkah-langkah install dan konfigurasi Kali Linux untuk penetration testing...",
-                url: "posting/setup-kali-linux.html"
-            },
-            {
-                title: "Pentingnya Cyber Security di Era Digital",
-                date: "15 Mei 2026",
-                excerpt: "Mengapa keamanan siber sangat krusial untuk individu dan perusahaan...",
-                url: "posting/cyber-security-era-digital.html"
-            }
+            { title: "Cara Memulai Ethical Hacking", date: "2026-05-25", file: "cara-hack-etis.md", excerpt: "Panduan lengkap untuk pemula yang ingin belajar ethical hacking..." },
+            { title: "Setup Kali Linux untuk Security Testing", date: "2026-05-20", file: "setup-kali.md", excerpt: "Langkah-langkah install dan konfigurasi Kali Linux..." }
         ];
-
+        
+        // Urutkan dari terbaru
+        posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        // Tampilkan 3 posting terbaru
+        const latestPosts = posts.slice(0, 3);
+        
+        function formatDate(dateStr) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateStr).toLocaleDateString('id-ID', options);
+        }
+        
         function displayPosts() {
             const container = document.getElementById('post-list');
             if(!container) return;
             
             let html = '';
-            posts.forEach(post => {
+            latestPosts.forEach(post => {
                 html += `
                     <div class="post-card">
                         <div class="post-title">${post.title}</div>
-                        <div class="post-meta">📅 ${post.date}</div>
+                        <div class="post-meta">📅 ${formatDate(post.date)}</div>
                         <div class="post-excerpt">${post.excerpt}</div>
-                        <a href="${post.url}" class="read-more">Baca Selengkapnya →</a>
+                        <a href="post.html?post=${post.file}" class="read-more">Baca Selengkapnya →</a>
                     </div>
                 `;
             });
