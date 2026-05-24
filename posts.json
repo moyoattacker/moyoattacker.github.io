@@ -1,0 +1,18 @@
+{
+  "posts": [
+    {
+      "title": "Cara Memulai Ethical Hacking",
+      "date": "2026-05-25",
+      "file": "cara-hack-etis.md",
+      "excerpt": "Panduan lengkap untuk pemula yang ingin belajar ethical hacking dari nol...",
+      "tags": ["ethical hacking", "pemula"]
+    },
+    {
+      "title": "Setup Kali Linux untuk Security Testing",
+      "date": "2026-05-20",
+      "file": "setup-kali.md",
+      "excerpt": "Langkah-langkah install dan konfigurasi Kali Linux untuk penetration testing...",
+      "tags": ["kali linux", "security"]
+    }
+  ]
+}
