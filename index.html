@@ -36,6 +36,47 @@
             padding: 50px;
             color: #ff3366;
         }
+        .post-card {
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            border: 1px solid #00ff9d;
+            transition: transform 0.3s;
+        }
+        .post-card:hover {
+            transform: translateX(10px);
+            box-shadow: 0 0 30px rgba(0, 255, 157, 0.2);
+        }
+        .post-title {
+            font-size: 28px;
+            color: #ff3366;
+            margin-bottom: 10px;
+        }
+        .post-meta {
+            font-size: 14px;
+            color: #88ffcc;
+            margin-bottom: 15px;
+        }
+        .post-excerpt {
+            color: #bbffdd;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .read-more {
+            color: #00ff9d;
+            text-decoration: none;
+            border: 1px solid #00ff9d;
+            padding: 8px 20px;
+            border-radius: 5px;
+            transition: 0.3s;
+            display: inline-block;
+        }
+        .read-more:hover {
+            background: #00ff9d;
+            color: #0a0e27;
+        }
     </style>
 </head>
 <body>
@@ -44,6 +85,7 @@
         <div class="nav-links">
             <a href="index.html">Home</a>
             <a href="blog.html">All Posts</a>
+            <a href="documentation/bounty/">Security Research</a>
             <a href="#contact">Contact</a>
         </div>
     </nav>
@@ -54,21 +96,21 @@
             <p>Gray Hat Hacker | Penetration Tester | Bug Hunter</p>
         </div>
 
-        <h2 class="section-title">📝 Latest Posts</h2>
+        <h2 class="section-title">📝 Latest Blog Posts</h2>
         
         <div id="post-list">
-            <div style="text-align: center; padding: 50px;">🔄 Loading posts from server...</div>
+            <div style="text-align: center; padding: 50px;">🔄 Loading posts...</div>
         </div>
 
         <div style="text-align: center; margin-top: 30px;">
-            <a href="blog.html" class="read-more" style="margin: 0 10px;">📚 View All Posts</a>
-            <a href="https://github.com/moyoattacker/moyoattacker.github.io/new/main/posting" class="read-more" style="background:#ff3366; border-color:#ff3366;">✏️ Buat Posting Baru</a>
+            <a href="blog.html" class="read-more" style="margin: 0 10px;">📚 View All Blog Posts</a>
+            <a href="documentation/bounty/" class="read-more" style="background:#ff3366; border-color:#ff3366;">🔬 Security Research (31 Reports)</a>
         </div>
 
         <section id="contact">
-            <div class="php-panel" style="background: rgba(0,0,0,0.8); padding: 20px; margin: 30px auto;">
-                <h3 style="text-align: center; font-size: 32px;">📡 Contact & Social</h3>
-                <div class="php-info" style="text-align: center; padding: 30px 20px;">
+            <div style="background: rgba(0,0,0,0.8); padding: 30px; border-radius: 15px; margin: 40px auto;">
+                <h3 style="text-align: center; font-size: 32px; color:#ff3366;">📡 Contact & Social</h3>
+                <div style="text-align: center; padding: 20px;">
                     <p style="font-size: 18px; margin: 15px 0;">📧 Email: <a href="mailto:moyotamvan@gmail.com" style="color:#00ff9d; text-decoration:none;">moyotamvan@gmail.com</a></p>
                     <p style="font-size: 18px; margin: 15px 0;">🐙 GitHub: <a href="https://github.com/moyoattacker" target="_blank" style="color:#00ff9d; text-decoration:none;">github.com/moyoattacker</a></p>
                     <p style="font-size: 18px; margin: 15px 0;">📘 Facebook: <a href="https://www.facebook.com/moyotamvan" target="_blank" style="color:#00ff9d; text-decoration:none;">fb.com/moyotamvan</a></p>
@@ -105,7 +147,7 @@
                 let html = '';
                 
                 if (latestPosts.length === 0) {
-                    html = '<div class="error-msg">📭 Belum ada postingan. Buat postingan pertama!</div>';
+                    html = '<div class="error-msg">📭 Belum ada postingan blog. Buat postingan pertama di folder posting/!</div>';
                 } else {
                     latestPosts.forEach(post => {
                         html += `
@@ -113,7 +155,7 @@
                                 <div class="post-title">${post.title}</div>
                                 <div class="post-meta">📅 ${formatDate(post.date)}</div>
                                 <div class="post-excerpt">${post.excerpt}</div>
-                                <a href="post.html?post=${post.file}" class="read-more">Baca Selengkapnya →</a>
+                                <a href="post.html?post=posting/${post.file}" class="read-more">Baca Selengkapnya →</a>
                             </div>
                         `;
                     });
