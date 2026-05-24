@@ -33,12 +33,17 @@
 
     <script>
         const posts = [
-            { title: "Cara Memulai Ethical Hacking", date: "25 Mei 2026", url: "posting/ethical-hacking-pemula.html" },
-            { title: "Setup Kali Linux untuk Security Testing", date: "20 Mei 2026", url: "posting/setup-kali-linux.html" },
-            { title: "Pentingnya Cyber Security di Era Digital", date: "15 Mei 2026", url: "posting/cyber-security-era-digital.html" }
+            { title: "Cara Memulai Ethical Hacking", date: "2026-05-25", file: "cara-hack-etis.md", excerpt: "Panduan lengkap untuk pemula..." },
+            { title: "Setup Kali Linux", date: "2026-05-20", file: "setup-kali.md", excerpt: "Langkah-langkah install Kali Linux..." }
         ];
-
+        
+        posts.sort((a, b) => new Date(b.date) - new Date(a.date));
         document.getElementById('post-count').innerText = posts.length;
+        
+        function formatDate(dateStr) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateStr).toLocaleDateString('id-ID', options);
+        }
         
         const container = document.getElementById('all-posts');
         let html = '';
@@ -46,8 +51,9 @@
             html += `
                 <div class="post-card">
                     <div class="post-title">${post.title}</div>
-                    <div class="post-meta">📅 ${post.date}</div>
-                    <a href="${post.url}" class="read-more">Baca →</a>
+                    <div class="post-meta">📅 ${formatDate(post.date)}</div>
+                    <div class="post-excerpt">${post.excerpt}</div>
+                    <a href="post.html?post=${post.file}" class="read-more">Baca →</a>
                 </div>
             `;
         });
