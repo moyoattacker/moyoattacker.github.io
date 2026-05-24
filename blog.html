@@ -12,6 +12,7 @@
         <div class="nav-links">
             <a href="index.html">Home</a>
             <a href="blog.html">All Posts</a>
+            <a href="documentation/bounty/">Security Research</a>
             <a href="index.html#contact">Contact</a>
         </div>
     </nav>
@@ -26,10 +27,13 @@
             <div style="text-align: center; padding: 50px;">🔄 Loading posts...</div>
         </div>
 
-        <a href="index.html" class="back-button">← Back to Home</a>
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="index.html" class="back-button" style="margin-right: 15px;">← Back to Home</a>
+            <a href="documentation/bounty/" class="read-more" style="background:#ff3366; border-color:#ff3366;">🔬 View Security Research (31 Reports)</a>
+        </div>
 
         <footer>
-            <p>&copy; 2025 Moyo Attacker</p>
+            <p>&copy; 2025 Moyo Attacker - Find The Bug, Own The Shell</p>
         </footer>
     </div>
 
@@ -56,7 +60,7 @@
                 let html = '';
                 
                 if (posts.length === 0) {
-                    html = '<div style="text-align:center;padding:50px;">📭 Belum ada postingan.</div>';
+                    html = '<div style="text-align:center;padding:50px;">📭 Belum ada postingan blog. Buat postingan pertama di folder <code style="background:#000;padding:2px 8px;border-radius:4px;">posting/</code>!</div>';
                 } else {
                     posts.forEach(post => {
                         html += `
@@ -64,7 +68,7 @@
                                 <div class="post-title">${post.title}</div>
                                 <div class="post-meta">📅 ${formatDate(post.date)}</div>
                                 <div class="post-excerpt">${post.excerpt}</div>
-                                <a href="post.html?post=${post.file}" class="read-more">Baca →</a>
+                                <a href="post.html?post=posting/${post.file}" class="read-more">Baca →</a>
                             </div>
                         `;
                     });
@@ -76,7 +80,7 @@
                 document.getElementById('all-posts').innerHTML = `
                     <div style="text-align:center;padding:50px;color:#ff3366;">
                         ❌ Error: ${error.message}<br>
-                        <small>Pastikan file posts.json ada di root folder.</small>
+                        <small>Pastikan file <strong>posts.json</strong> ada di root folder.</small>
                     </div>
                 `;
             }
