@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moyo Attacker | Security Research</title>
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        .post-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(0,0,0,0.6);
+            padding: 40px;
+            border-radius: 15px;
+        }
+        .post-content pre {
+            background: #0a0e27;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        .post-content code {
+            color: #ff88aa;
+        }
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #00ff9d;
+        }
+        .error-msg {
+            text-align: center;
+            padding: 50px;
+            color: #ff3366;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">MOYO<span>_</span>ATTACKER</div>
+        <div class="nav-links">
+            <a href="/index.html">Home</a>
+            <a href="/blog.html">Blog</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div id="post-container">
+            <div class="loading">⏳ Loading security research...</div>
+        </div>
+        <a href="javascript:history.back()" class="back-button">← Back</a>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Moyo Attacker - Security Research</p>
+    </footer>
+
+    <script>
+        // Ambil nama file dari URL (tanpa .md)
+        let mdFileName = window.location.pathname.split('/').pop();
+        
+        // Jika URL berakhiran .md, ambil namanya
+        if (mdFileName.endsWith('.md')) {
+            const mdPath = window.location.pathname;
+            
+            fetch(mdPath)
+                .then(response => {
+                    if (!response.ok) throw new Error('File not found');
+                    return response.text();
+                })
+                .then(markdown => {
+                    const html = marked.parse(markdown);
+                    document.getElementById('post-container').innerHTML = `
+                        <div class="post-content">
+                            ${html}
+                        </div>
+                    `;
+                    const firstHeading = document.querySelector('.post-content h1');
+                    if (firstHeading) {
+                        document.title = `${firstHeading.innerText} | Moyo Attacker`;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('post-container').innerHTML = `
+                        <div class="error-msg">
+                            ❌ Error: ${error.message}<br><br>
+                            <small>File tidak ditemukan atau gagal dimuat.</small>
+                        </div>
+                    `;
+                });
+        } else {
+            // Tampilkan daftar file .md di folder ini (optional)
+            document.getElementById('post-container').innerHTML = `
+                <div class="post-content">
+                    <h1>📁 Security Research Archive</h1>
+                    <p>Daftar laporan keamanan di folder ini:</p>
+                    <ul id="file-list"></ul>
+                </div>
+            `;
+            
+            // Gunakan GitHub API untuk daftar file
+            fetch('https://api.github.com/repos/moyoattacker/moyoattacker.github.io/contents/documentation/bounty')
+                .then(response => response.json())
+                .then(files => {
+                    const fileList = document.getElementById('file-list');
+                    files.forEach(file => {
+                        if (file.name.endsWith('.md')) {
+                            const li = document.createElement('li');
+                            li.innerHTML = `<a href="${file.name}" style="color:#00ff9d;">📄 ${file.name.replace('.md', '')}</a>`;
+                            fileList.appendChild(li);
+                        }
+                    });
+                });
+        }
+    </script>
+</body>
+</html>
