@@ -22,7 +22,9 @@
             <p style="margin-top: 15px;">Total: <span id="post-count">0</span> artikel</p>
         </div>
 
-        <div id="all-posts"></div>
+        <div id="all-posts">
+            <div style="text-align: center; padding: 50px;">🔄 Loading posts...</div>
+        </div>
 
         <a href="index.html" class="back-button">← Back to Home</a>
 
@@ -32,32 +34,55 @@
     </div>
 
     <script>
-        const posts = [
-            { title: "Cara Memulai Ethical Hacking", date: "2026-05-25", file: "cara-hack-etis.md", excerpt: "Panduan lengkap untuk pemula..." },
-            { title: "Setup Kali Linux", date: "2026-05-20", file: "setup-kali.md", excerpt: "Langkah-langkah install Kali Linux..." }
-        ];
-        
-        posts.sort((a, b) => new Date(b.date) - new Date(a.date));
-        document.getElementById('post-count').innerText = posts.length;
-        
-        function formatDate(dateStr) {
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            return new Date(dateStr).toLocaleDateString('id-ID', options);
+        async function loadAllPosts() {
+            try {
+                const response = await fetch('posts.json');
+                if (!response.ok) throw new Error('Gagal load posts.json');
+                
+                const data = await response.json();
+                let posts = data.posts;
+                
+                // Urutkan dari terbaru
+                posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                document.getElementById('post-count').innerText = posts.length;
+                
+                function formatDate(dateStr) {
+                    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                    return new Date(dateStr).toLocaleDateString('id-ID', options);
+                }
+                
+                const container = document.getElementById('all-posts');
+                let html = '';
+                
+                if (posts.length === 0) {
+                    html = '<div style="text-align:center;padding:50px;">📭 Belum ada postingan.</div>';
+                } else {
+                    posts.forEach(post => {
+                        html += `
+                            <div class="post-card">
+                                <div class="post-title">${post.title}</div>
+                                <div class="post-meta">📅 ${formatDate(post.date)}</div>
+                                <div class="post-excerpt">${post.excerpt}</div>
+                                <a href="post.html?post=${post.file}" class="read-more">Baca →</a>
+                            </div>
+                        `;
+                    });
+                }
+                
+                container.innerHTML = html;
+                
+            } catch (error) {
+                document.getElementById('all-posts').innerHTML = `
+                    <div style="text-align:center;padding:50px;color:#ff3366;">
+                        ❌ Error: ${error.message}<br>
+                        <small>Pastikan file posts.json ada di root folder.</small>
+                    </div>
+                `;
+            }
         }
         
-        const container = document.getElementById('all-posts');
-        let html = '';
-        posts.forEach(post => {
-            html += `
-                <div class="post-card">
-                    <div class="post-title">${post.title}</div>
-                    <div class="post-meta">📅 ${formatDate(post.date)}</div>
-                    <div class="post-excerpt">${post.excerpt}</div>
-                    <a href="post.html?post=${post.file}" class="read-more">Baca →</a>
-                </div>
-            `;
-        });
-        container.innerHTML = html;
+        loadAllPosts();
     </script>
 </body>
 </html>
