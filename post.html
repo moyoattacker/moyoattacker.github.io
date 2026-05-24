@@ -9,34 +9,19 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         .post-content {
-            max-width: 800px;
+            max-width: 100%;  /* ← full lebar */
             margin: 0 auto;
-            background: rgba(0,0,0,0.6);
-            padding: 40px;
-            border-radius: 15px;
+            background: rgba(0,0,0,0.85);
+            padding: 50px 60px;  /* ← padding samping lebih lega */
+            border-radius: 0;  /* ← biar tidak melengkung, full kotak */
+            width: 100%;
+            box-sizing: border-box;
         }
-        .post-content img {
+        
+        .container {
             max-width: 100%;
-            border-radius: 8px;
-        }
-        .post-content pre {
-            background: #0a0e27;
-            padding: 15px;
-            border-radius: 8px;
-            overflow-x: auto;
-        }
-        .post-content code {
-            color: #ff88aa;
-        }
-        .loading {
-            text-align: center;
-            padding: 50px;
-            color: #00ff9d;
-        }
-        .error-msg {
-            text-align: center;
-            padding: 50px;
-            color: #ff3366;
+            margin: 0;
+            padding: 0;
         }
     </style>
 </head>
