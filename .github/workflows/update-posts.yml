@@ -1,0 +1,59 @@
+name: Update Posts JSON
+
+on:
+  push:
+    paths:
+      - 'posting/*.md'
+      - '.github/workflows/update-posts.yml'
+
+jobs:
+  generate-json:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Generate posts.json from markdown files
+        run: |
+          echo '{ "posts": [' > posts.json
+          first=true
+          for file in posting/*.md; do
+            if [ -f "$file" ]; then
+              filename=$(basename "$file" .md)
+              title=$(head -n 1 "$file" | sed 's/^# //')
+              date=$(grep -E '^> 📅' "$file" | sed 's/> 📅 //' | xargs)
+              excerpt=$(grep -v '^#' "$file" | grep -v '^>' | grep -v '^---' | grep -v '^\*' | grep -v '^$' | head -n 2 | tr '\n' ' ' | sed 's/"/\\"/g' | cut -c1-150)
+              
+              if [ -z "$date" ]; then
+                date=$(git log -1 --format="%ad" --date=short -- "$file")
+              fi
+              if [ -z "$excerpt" ]; then
+                excerpt="Baca selengkapnya di postingan ini..."
+              fi
+              
+              if [ "$first" = true ]; then
+                first=false
+              else
+                echo ',' >> posts.json
+              fi
+              
+              cat >> posts.json << EOF
+              {
+                "title": "$title",
+                "date": "$date",
+                "file": "$filename.md",
+                "excerpt": "$excerpt"
+              }
+EOF
+            fi
+          done
+          echo '] }' >> posts.json
+          
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add posts.json
+          git diff --staged --quiet || git commit -m "Auto-update posts.json"
+          git push
