@@ -31,6 +31,11 @@
             padding-left: 20px;
             margin: 40px 0 30px;
         }
+        .error-msg {
+            text-align: center;
+            padding: 50px;
+            color: #ff3366;
+        }
     </style>
 </head>
 <body>
@@ -52,11 +57,12 @@
         <h2 class="section-title">📝 Latest Posts</h2>
         
         <div id="post-list">
-            <div style="text-align: center; padding: 50px;">🔄 Loading posts...</div>
+            <div style="text-align: center; padding: 50px;">🔄 Loading posts from server...</div>
         </div>
 
         <div style="text-align: center; margin-top: 30px;">
             <a href="blog.html" class="read-more" style="margin: 0 10px;">📚 View All Posts</a>
+            <a href="https://github.com/moyoattacker/moyoattacker.github.io/new/main/posting" class="read-more" style="background:#ff3366; border-color:#ff3366;">✏️ Buat Posting Baru</a>
         </div>
 
         <section id="contact">
@@ -74,44 +80,57 @@
     </div>
 
     <script>
-        // Daftar postingan (otomatis dari folder, tapi harus manual daftarin dulu)
-        // Biar otomatis, kita pakai sistem index.json nanti
-        
-        const posts = [
-            { title: "Cara Memulai Ethical Hacking", date: "2026-05-25", file: "cara-hack-etis.md", excerpt: "Panduan lengkap untuk pemula yang ingin belajar ethical hacking..." },
-            { title: "Setup Kali Linux untuk Security Testing", date: "2026-05-20", file: "setup-kali.md", excerpt: "Langkah-langkah install dan konfigurasi Kali Linux..." }
-        ];
-        
-        // Urutkan dari terbaru
-        posts.sort((a, b) => new Date(b.date) - new Date(a.date));
-        
-        // Tampilkan 3 posting terbaru
-        const latestPosts = posts.slice(0, 3);
-        
-        function formatDate(dateStr) {
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            return new Date(dateStr).toLocaleDateString('id-ID', options);
-        }
-        
-        function displayPosts() {
-            const container = document.getElementById('post-list');
-            if(!container) return;
-            
-            let html = '';
-            latestPosts.forEach(post => {
-                html += `
-                    <div class="post-card">
-                        <div class="post-title">${post.title}</div>
-                        <div class="post-meta">📅 ${formatDate(post.date)}</div>
-                        <div class="post-excerpt">${post.excerpt}</div>
-                        <a href="post.html?post=${post.file}" class="read-more">Baca Selengkapnya →</a>
+        async function loadPosts() {
+            try {
+                const response = await fetch('posts.json');
+                if (!response.ok) throw new Error('Gagal load posts.json');
+                
+                const data = await response.json();
+                let posts = data.posts;
+                
+                // Urutkan dari terbaru
+                posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                // Ambil 3 posting terbaru
+                const latestPosts = posts.slice(0, 3);
+                
+                function formatDate(dateStr) {
+                    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                    return new Date(dateStr).toLocaleDateString('id-ID', options);
+                }
+                
+                const container = document.getElementById('post-list');
+                let html = '';
+                
+                if (latestPosts.length === 0) {
+                    html = '<div class="error-msg">📭 Belum ada postingan. Buat postingan pertama!</div>';
+                } else {
+                    latestPosts.forEach(post => {
+                        html += `
+                            <div class="post-card">
+                                <div class="post-title">${post.title}</div>
+                                <div class="post-meta">📅 ${formatDate(post.date)}</div>
+                                <div class="post-excerpt">${post.excerpt}</div>
+                                <a href="post.html?post=${post.file}" class="read-more">Baca Selengkapnya →</a>
+                            </div>
+                        `;
+                    });
+                }
+                
+                container.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('post-list').innerHTML = `
+                    <div class="error-msg">
+                        ❌ Gagal memuat postingan: ${error.message}<br><br>
+                        <small>Pastikan file <strong>posts.json</strong> ada di root folder.</small>
                     </div>
                 `;
-            });
-            container.innerHTML = html;
+            }
         }
         
-        displayPosts();
+        loadPosts();
     </script>
 </body>
 </html>
