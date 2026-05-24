@@ -8,9 +8,9 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         .post-content {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.85);
             padding: 40px;
             border-radius: 15px;
         }
@@ -23,14 +23,24 @@
         .post-content code {
             color: #ff88aa;
         }
-        .loading {
-            text-align: center;
-            padding: 50px;
-            color: #00ff9d;
+        .file-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            list-style: none;
+            padding: 0;
         }
-        .error-msg {
-            text-align: center;
-            padding: 50px;
+        .file-list li {
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            border-radius: 8px;
+            border-left: 3px solid #00ff9d;
+        }
+        .file-list a {
+            color: #00ff9d;
+            text-decoration: none;
+        }
+        .file-list a:hover {
             color: #ff3366;
         }
     </style>
@@ -45,10 +55,10 @@
     </nav>
 
     <div class="container">
-        <div id="post-container">
-            <div class="loading">⏳ Loading security research...</div>
+        <div id="content">
+            <div class="loading" style="text-align:center; padding:50px;">⏳ Loading...</div>
         </div>
-        <a href="javascript:history.back()" class="back-button">← Back</a>
+        <a href="javascript:history.back()" class="back-button" style="display:inline-block; margin-top:20px;">← Back</a>
     </div>
 
     <footer>
@@ -56,21 +66,20 @@
     </footer>
 
     <script>
-        // Ambil nama file dari URL (tanpa .md)
-        let mdFileName = window.location.pathname.split('/').pop();
+        // Ambil parameter 'file' dari URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const fileName = urlParams.get('file');
         
-        // Jika URL berakhiran .md, ambil namanya
-        if (mdFileName.endsWith('.md')) {
-            const mdPath = window.location.pathname;
-            
-            fetch(mdPath)
+        if (fileName) {
+            // Tampilkan file spesifik
+            fetch(fileName)
                 .then(response => {
                     if (!response.ok) throw new Error('File not found');
                     return response.text();
                 })
                 .then(markdown => {
                     const html = marked.parse(markdown);
-                    document.getElementById('post-container').innerHTML = `
+                    document.getElementById('content').innerHTML = `
                         <div class="post-content">
                             ${html}
                         </div>
@@ -81,35 +90,42 @@
                     }
                 })
                 .catch(error => {
-                    document.getElementById('post-container').innerHTML = `
-                        <div class="error-msg">
-                            ❌ Error: ${error.message}<br><br>
-                            <small>File tidak ditemukan atau gagal dimuat.</small>
+                    document.getElementById('content').innerHTML = `
+                        <div class="error-msg" style="text-align:center; color:#ff3366;">
+                            ❌ Error: ${error.message}<br>
+                            <small>File ${fileName} tidak ditemukan.</small>
                         </div>
                     `;
                 });
         } else {
-            // Tampilkan daftar file .md di folder ini (optional)
-            document.getElementById('post-container').innerHTML = `
-                <div class="post-content">
-                    <h1>📁 Security Research Archive</h1>
-                    <p>Daftar laporan keamanan di folder ini:</p>
-                    <ul id="file-list"></ul>
-                </div>
-            `;
-            
-            // Gunakan GitHub API untuk daftar file
+            // Tampilkan daftar semua file .md (auto-detect)
             fetch('https://api.github.com/repos/moyoattacker/moyoattacker.github.io/contents/documentation/bounty')
                 .then(response => response.json())
                 .then(files => {
-                    const fileList = document.getElementById('file-list');
-                    files.forEach(file => {
-                        if (file.name.endsWith('.md')) {
-                            const li = document.createElement('li');
-                            li.innerHTML = `<a href="${file.name}" style="color:#00ff9d;">📄 ${file.name.replace('.md', '')}</a>`;
-                            fileList.appendChild(li);
-                        }
+                    const mdFiles = files.filter(f => f.name.endsWith('.md')).sort();
+                    let html = `
+                        <div class="post-content">
+                            <h1>📁 Security Research Archive</h1>
+                            <p>Total: ${mdFiles.length} laporan keamanan</p>
+                            <ul class="file-list">
+                    `;
+                    mdFiles.forEach(file => {
+                        const title = file.name.replace('.md', '').replace(/-/g, ' ');
+                        html += `<li><a href="?file=${file.name}">📄 ${title}</a></li>`;
                     });
+                    html += `
+                            </ul>
+                        </div>
+                    `;
+                    document.getElementById('content').innerHTML = html;
+                    document.title = 'Security Research Archive | Moyo Attacker';
+                })
+                .catch(error => {
+                    document.getElementById('content').innerHTML = `
+                        <div class="error-msg" style="text-align:center; color:#ff3366;">
+                            ❌ Gagal memuat daftar file: ${error.message}
+                        </div>
+                    `;
                 });
         }
     </script>
