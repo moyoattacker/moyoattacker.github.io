@@ -1,0 +1,50 @@
+name: Auto Convert MD to HTML
+
+on:
+  push:
+    paths:
+      - 'documentation/bounty/*.md'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Convert all MD files to HTML
+        run: |
+          # Baca template
+          TEMPLATE=$(cat template.html)
+          
+          # Loop semua file .md di folder documentation/bounty/
+          for md_file in documentation/bounty/*.md; do
+            if [ -f "$md_file" ]; then
+              # Ambil nama file tanpa ekstensi
+              basename=$(basename "$md_file" .md)
+              html_file="documentation/bounty/${basename}.html"
+              
+              # Konversi markdown ke HTML pake marked
+              md_content=$(cat "$md_file")
+              html_content=$(echo "$md_content" | npx marked)
+              
+              # Gabungin dengan template
+              echo "$TEMPLATE" | sed "s|<!-- CONTENT_PLACEHOLDER -->|$html_content|" > "$html_file"
+              
+              echo "✅ Generated: $html_file"
+            fi
+          done
+          
+      - name: Install marked
+        run: npm install -g marked
+          
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "actions@github.com"
+          git add documentation/bounty/*.html
+          git diff --staged --quiet || git commit -m "🤖 Auto-generate HTML from MD files"
+          git push
