@@ -1,21 +1,10 @@
 {
   "posts": [
     {
-      "title": "Cara Memulai Ethical Hacking untuk Pemula",
-      "date": "2026-05-25",
-      "file": "cara-hack-etis.md",
-      "excerpt": "![Ethical Hacking](https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800)",
-      "tags": [
-        "Ethical Hacking",
-        "Pemula"
-      ]
-    },
-    {
-      "title": "Vulnerability Ranking -- iCloud Activation Lock Research",
-      "date": "2026-01-01",
+      "title": "Vulnerability Ranking -- iCloud Activation Lock Research",
+      "date": "2026-05-24",
       "file": "ranking_vulnb.md",
-      "excerpt": "All 31 findings ranked from most critical to least critical. Per-finding details: [`documentation/bounty/NN-*.md`](documentation/bounty/).",
-      "tags": []
+      "excerpt": "All 31 findings ranked from most critical to least critical. Per-finding details: [`documentation/bounty/NN-*.md`](documentation/bounty/)."
     }
   ]
 }
