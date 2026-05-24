@@ -1,90 +1,65 @@
-name: Auto Update Posts JSON
+name: Auto Update Posts
 
 on:
   push:
     paths:
       - 'posting/*.md'
-      - '.github/workflows/update-posts.yml'
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  update-json:
+  update:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
       
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      
-      - name: Generate posts.json from markdown files
+      - name: Generate posts.json
         run: |
-          python - << 'EOF'
-          import os
-          import json
-          import re
-          from pathlib import Path
+          echo '{' > posts.json
+          echo '  "posts": [' >> posts.json
           
-          posts = []
+          first=true
+          for file in posting/*.md; do
+            if [ -f "$file" ]; then
+              filename=$(basename "$file")
+              title=$(head -n 1 "$file" | sed 's/^# //' | sed 's/"/\\"/g')
+              date=$(grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' "$file" | head -1)
+              if [ -z "$date" ]; then
+                date=$(date +%Y-%m-%d)
+              fi
+              excerpt=$(awk '/^[^#]/ && !/^>/ && length($0)>10 {print substr($0,1,150); exit}' "$file" | sed 's/"/\\"/g')
+              if [ -z "$excerpt" ]; then
+                excerpt="Baca selengkapnya di postingan ini"
+              fi
+              
+              if [ "$first" = true ]; then
+                first=false
+              else
+                echo ',' >> posts.json
+              fi
+              
+              printf '    {\n' >> posts.json
+              printf '      "title": "%s",\n' "$title" >> posts.json
+              printf '      "date": "%s",\n' "$date" >> posts.json
+              printf '      "file": "%s",\n' "$filename" >> posts.json
+              printf '      "excerpt": "%s"\n' "$excerpt" >> posts.json
+              printf '    }' >> posts.json
+            fi
+          done
           
-          # Baca semua file .md di folder posting/
-          md_files = sorted(Path('posting').glob('*.md'), key=lambda x: x.stat().st_mtime, reverse=True)
+          echo '' >> posts.json
+          echo '  ]' >> posts.json
+          echo '}' >> posts.json
           
-          for md_file in md_files:
-              with open(md_file, 'r', encoding='utf-8') as f:
-                  content = f.read()
-              
-              # Extract title (dari heading # pertama)
-              title_match = re.search(r'^#\s+(.+?)(?:\n|$)', content, re.MULTILINE)
-              title = title_match.group(1).strip() if title_match else md_file.stem.replace('-', ' ').title()
-              
-              # Extract date (dari format > 📅 YYYY-MM-DD)
-              date_match = re.search(r'>\s*📅\s*(\d{4}-\d{2}-\d{2})', content)
-              date = date_match.group(1) if date_match else '2026-01-01'
-              
-              # Extract excerpt (ambil paragraf pertama setelah heading)
-              lines = content.split('\n')
-              excerpt = ""
-              found_text = False
-              for line in lines:
-                  if line.strip() and not line.startswith('#') and not line.startswith('>') and not line.startswith('---'):
-                      excerpt = line.strip()[:200]
-                      break
-              
-              if not excerpt:
-                  excerpt = f"Baca selengkapnya tentang {title}..."
-              
-              # Extract tags (opsional: dari baris 🏷️)
-              tags_match = re.search(r'🏷️\s*(.+?)(?:\n|$)', content)
-              tags = [t.strip() for t in tags_match.group(1).split(',')] if tags_match else []
-              
-              posts.append({
-                  "title": title,
-                  "date": date,
-                  "file": md_file.name,
-                  "excerpt": excerpt,
-                  "tags": tags
-              })
+          echo "Generated posts.json:"
+          cat posts.json
           
-          # Urutkan dari terbaru ke terlama
-          posts.sort(key=lambda x: x['date'], reverse=True)
-          
-          # Simpan ke posts.json
-          with open('posts.json', 'w', encoding='utf-8') as f:
-              json.dump({"posts": posts}, f, indent=2, ensure_ascii=False)
-          
-          print(f"✅ Generated {len(posts)} posts to posts.json")
-          EOF
-      
-      - name: Commit and push changes
+      - name: Commit and push
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add posts.json
-          git diff --staged --quiet || git commit -m "🤖 Auto-update posts.json from markdown files"
+          git diff --cached --quiet || git commit -m "Auto-update posts.json"
           git push
