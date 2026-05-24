@@ -54,7 +54,7 @@
             document.getElementById('post-container').innerHTML = '<div class="error-msg">❌ No post specified</div>';
         } else {
             // Fetch file markdown dari folder posting/
-            fetch(`posting/${postFile}`)
+            fetch(`${postFile}`)
                 .then(response => {
                     if (!response.ok) throw new Error('Post not found');
                     return response.text();
