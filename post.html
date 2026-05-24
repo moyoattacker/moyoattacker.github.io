@@ -2,26 +2,135 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Moyo Attacker | Reading Post</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Markdown library -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
-        .post-content {
-            max-width: 100%;  /* ← full lebar */
-            margin: 0 auto;
-            background: rgba(0,0,0,0.85);
-            padding: 50px 60px;  /* ← padding samping lebih lega */
-            border-radius: 0;  /* ← biar tidak melengkung, full kotak */
-            width: 100%;
-            box-sizing: border-box;
+        /* Global */
+        body {
+            background: linear-gradient(135deg, #0a0e27 0%, #0a0f2a 100%);
+            font-family: 'Courier New', monospace;
+            color: #00ff9d;
         }
         
         .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Post content */
+        .post-content {
+            background: rgba(0,0,0,0.85);
+            padding: 40px;
+            border-radius: 15px;
+            overflow-x: auto;
+        }
+        
+        .post-content img {
             max-width: 100%;
-            margin: 0;
-            padding: 0;
+            border-radius: 8px;
+        }
+        
+        .post-content pre {
+            background: #0a0e27;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        
+        .post-content code {
+            color: #ff88aa;
+        }
+        
+        /* ====== TABEL RESPONSIF ====== */
+        .post-content table {
+            display: block;
+            overflow-x: auto;
+            white-space: normal;
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+        
+        /* Untuk HP: tabel bisa di-scroll horizontal */
+        @media (max-width: 768px) {
+            .post-content table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .post-content td, 
+            .post-content th {
+                white-space: normal;
+                word-break: break-word;
+                min-width: 120px;
+            }
+            
+            /* Kolom tertentu biar lebih lebar di HP */
+            .post-content td:first-child,
+            .post-content th:first-child {
+                position: sticky;
+                left: 0;
+                background: #0a0e27;
+                z-index: 1;
+            }
+        }
+        
+        .post-content th,
+        .post-content td {
+            border: 1px solid #00ff9d;
+            padding: 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+        
+        .post-content th {
+            background: rgba(0, 255, 157, 0.2);
+            color: #00ff9d;
+            font-weight: bold;
+        }
+        
+        .post-content td {
+            color: #bbffdd;
+        }
+        
+        /* Ukuran font di HP */
+        @media (max-width: 768px) {
+            .post-content {
+                padding: 20px;
+            }
+            
+            .post-content th,
+            .post-content td {
+                padding: 8px;
+                font-size: 11px;
+            }
+        }
+        
+        .loading, .error-msg {
+            text-align: center;
+            padding: 50px;
+        }
+        
+        .back-button {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 25px;
+            border: 1px solid #00ff9d;
+            color: #00ff9d;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 40px;
+            margin-top: 60px;
+            border-top: 1px solid rgba(0, 255, 157, 0.3);
         }
     </style>
 </head>
@@ -46,29 +155,24 @@
     </footer>
 
     <script>
-        // Ambil nama file dari URL
         const urlParams = new URLSearchParams(window.location.search);
         const postFile = urlParams.get('post');
         
         if (!postFile) {
             document.getElementById('post-container').innerHTML = '<div class="error-msg">❌ No post specified</div>';
         } else {
-            // Fetch file markdown dari folder posting/
-            fetch(`${postFile}`)
+            fetch(postFile)
                 .then(response => {
                     if (!response.ok) throw new Error('Post not found');
                     return response.text();
                 })
                 .then(markdown => {
-                    // Convert markdown ke HTML
                     const html = marked.parse(markdown);
                     document.getElementById('post-container').innerHTML = `
                         <div class="post-content">
                             ${html}
                         </div>
                     `;
-                    
-                    // Set judul halaman dari heading pertama
                     const firstHeading = document.querySelector('.post-content h1');
                     if (firstHeading) {
                         document.title = `${firstHeading.innerText} | Moyo Attacker`;
@@ -78,7 +182,7 @@
                     document.getElementById('post-container').innerHTML = `
                         <div class="error-msg">
                             ❌ Error: ${error.message}<br><br>
-                            <small>File posting/${postFile} tidak ditemukan.</small><br><br>
+                            <small>File ${postFile} tidak ditemukan.</small><br><br>
                             <a href="blog.html" style="color:#00ff9d;">← Kembali ke Blog</a>
                         </div>
                     `;
